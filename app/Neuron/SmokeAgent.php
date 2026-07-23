@@ -6,6 +6,7 @@ namespace App\Neuron;
 
 use NeuronAI\Agent\Agent;
 use NeuronAI\HttpClient\GuzzleHttpClient;
+use NeuronAI\Laravel\Facades\AIProvider;
 use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Ollama\Ollama;
 
@@ -17,17 +18,18 @@ class SmokeAgent extends Agent
 {
     protected function provider(): AIProviderInterface
     {
-        /** @var array{url: string, model: string, parameters?: array<string, mixed>} $ollama */
-        $ollama = config('neuron.provider.ollama');
+        $provider = AIProvider::driver();
 
-        return new Ollama(
-            url: $ollama['url'],
-            model: $ollama['model'],
-            parameters: $ollama['parameters'] ?? [],
-            httpClient: new GuzzleHttpClient(
-                timeout: (float) config('companion.timeouts.llm_seconds', 120),
-            ),
-        );
+        // CPU-Smoke braucht längeren Timeout als Neuron-Default (60s)
+        if ($provider instanceof Ollama) {
+            $provider->setHttpClient(
+                (new GuzzleHttpClient(
+                    timeout: (float) config('companion.timeouts.llm_seconds', 120),
+                ))->withBaseUri((string) config('neuron.provider.ollama.url')),
+            );
+        }
+
+        return $provider;
     }
 
     public function instructions(): string

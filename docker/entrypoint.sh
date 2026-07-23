@@ -17,7 +17,11 @@ if [ -f composer.json ] && [ ! -d vendor ]; then
 fi
 
 if [ -f artisan ]; then
-    php artisan key:generate --force --ansi || true
+    # Nur generieren wenn APP_KEY fehlt/leer – nie --force (sonst Rotation bei jedem Start)
+    APP_KEY_VALUE=$(grep -E '^APP_KEY=' .env 2>/dev/null | cut -d '=' -f2- | tr -d '\r' | tr -d '"' || true)
+    if [ -z "$APP_KEY_VALUE" ]; then
+        php artisan key:generate --ansi || true
+    fi
     php artisan migrate --force --ansi || true
 fi
 

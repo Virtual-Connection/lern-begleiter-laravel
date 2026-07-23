@@ -219,7 +219,8 @@ return [
         ],
 
         'chroma' => [
-            'collectionUrl' => env('CHROMA_COLLECTION', 'companion'),
+            // Parameter heißt collection (nicht collectionUrl – Neuron-Package-Default ist falsch)
+            'collection' => env('CHROMA_COLLECTION', 'companion'),
             'host' => env('CHROMA_HOST', 'http://chroma:8000'),
             'tenant' => env('CHROMA_TENANT', 'default_tenant'),
             'database' => env('CHROMA_DATABASE', 'default_database'),
