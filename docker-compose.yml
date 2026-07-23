@@ -16,7 +16,7 @@ services:
       DB_DATABASE: /var/www/html/data/app/database.sqlite
       QUEUE_CONNECTION: database
       OLLAMA_URL: http://ollama:11434/api
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:1.5b}
       OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
       NEURON_AI_PROVIDER: ollama
       NEURON_EMBEDDING_PROVIDER: ollama
@@ -52,7 +52,7 @@ services:
       DB_DATABASE: /var/www/html/data/app/database.sqlite
       QUEUE_CONNECTION: database
       OLLAMA_URL: http://ollama:11434/api
-      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:1.5b}
       OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
       NEURON_AI_PROVIDER: ollama
       NEURON_EMBEDDING_PROVIDER: ollama
@@ -104,8 +104,8 @@ services:
         set -e
         echo "Pulling embedding model nomic-embed-text..."
         ollama pull nomic-embed-text
-        echo "Pulling chat model qwen3:4b..."
-        ollama pull qwen3:4b
+        echo "Pulling chat model qwen2.5:1.5b (CPU-freundlich)..."
+        ollama pull qwen2.5:1.5b
         echo "Ollama models ready."
     restart: "no"
     networks:

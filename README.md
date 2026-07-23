@@ -26,7 +26,7 @@ Was startet:
 | `queue` | Queue-Worker | – (nur intern) |
 | `ollama` | LLM + Embeddings | – (nur Compose-Netz) |
 | `chroma` | Vektor-Store | – (nur Compose-Netz) |
-| `ollama-init` | zieht `nomic-embed-text` + `qwen3:4b` einmalig | – |
+| `ollama-init` | zieht `nomic-embed-text` + `qwen2.5:1.5b` einmalig | – |
 
 Persistenz unter `D:\lern-begleiter-laravel\data`:
 
@@ -50,11 +50,12 @@ docker compose exec app php artisan tinker
 
 (In Tinker keine `use`-Statements und kein vorangestelltes `php` — eine Zeile mit FQCN.)
 
-Erwartung: eine kurze textuelle Antwort vom lokalen Modell `qwen3:4b`.
+Erwartung: eine kurze textuelle Antwort vom lokalen Modell `qwen2.5:1.5b`.
 
 Hinweise:
-- Erst nach `ollama-init` mit Exit 0 (`Ollama models ready.` / `ollama list` zeigt `qwen3:4b`).
-- Kalter Erststart kann länger dauern; Timeout ist 180s (`companion.timeouts.llm_seconds`), Thinking ist deaktiviert (`think: false`), Antwortlänge begrenzt (`num_predict: 64`). Auf CPU kann der Smoke ~2–3 Minuten brauchen – parallel keine zweite Ollama-Anfrage starten.
+- Erst nach erfolgreichem Modell-Pull (`ollama list` zeigt `qwen2.5:1.5b`).
+- Timeout 180s; Antwortlänge begrenzt (`num_predict: 128`). Parallel keine zweite Ollama-Anfrage.
+- Optional schwerer: `OLLAMA_MODEL=qwen3:4b` (Qualität, auf CPU oft zu langsam).
 - Kein echter LLM-Call in Pest.
 
 ## Qualitätssicherung (lokal)
@@ -78,6 +79,6 @@ CI (GitHub Actions) führt dieselben drei Checks aus.
 
 ## Hinweise
 
-- Default-Chat-Modell: `qwen3:4b` (RAM-schonend). Optional später `qwen3:8b` via `OLLAMA_MODEL`.
+- Default-Chat-Modell: `qwen2.5:1.5b` (CPU-Dev). Optional `qwen3:4b` / `qwen3:8b` via `OLLAMA_MODEL` bei mehr RAM/GPU.
 - Embedding-Modell: `nomic-embed-text`.
 - Livewire: Spec nennt v3; mit Laravel 13 ist nur Livewire 4 installierbar – dokumentiert in AP-1.

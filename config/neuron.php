@@ -60,13 +60,11 @@ return [
 
         'ollama' => [
             'url' => env('OLLAMA_URL', 'http://ollama:11434/api'),
-            'model' => env('OLLAMA_MODEL', 'qwen3:4b'),
-            // think=false: Qwen3 sonst oft >60s nur für Reasoning (Default-HTTP-Timeout von Neuron)
-            // num_predict: CPU-Inferenz ~0.4 t/s – kurze Antworten für Smoke/MVP begrenzen
+            'model' => env('OLLAMA_MODEL', 'qwen2.5:1.5b'),
+            // num_predict begrenzt Antwortlänge (CPU-Dev-Stack)
             'parameters' => [
-                'think' => false,
                 'options' => [
-                    'num_predict' => 64,
+                    'num_predict' => 128,
                 ],
             ],
         ],

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'chat_model' => env('OLLAMA_MODEL', 'qwen3:4b'),
+    'chat_model' => env('OLLAMA_MODEL', 'qwen2.5:1.5b'),
 
     'embedding_model' => env('OLLAMA_EMBEDDING_MODEL', 'nomic-embed-text'),
 
