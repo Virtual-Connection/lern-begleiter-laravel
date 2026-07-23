@@ -1,0 +1,140 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lern-begleiter-app
+    ports:
+      - "${APP_PORT:-8080}:8000"
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    environment:
+      APP_URL: http://localhost:${APP_PORT:-8080}
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/data/app/database.sqlite
+      QUEUE_CONNECTION: database
+      OLLAMA_URL: http://ollama:11434/api
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      NEURON_AI_PROVIDER: ollama
+      NEURON_EMBEDDING_PROVIDER: ollama
+      NEURON_STORE_PROVIDER: chroma
+      CHROMA_HOST: http://chroma:8000
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
+    depends_on:
+      ollama:
+        condition: service_healthy
+      chroma:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    networks:
+      - companion
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lern-begleiter-queue
+    command: ["php", "artisan", "queue:work", "--sleep=1", "--tries=3", "--timeout=120"]
+    volumes:
+      - .:/var/www/html
+    env_file:
+      - .env
+    environment:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: /var/www/html/data/app/database.sqlite
+      QUEUE_CONNECTION: database
+      OLLAMA_URL: http://ollama:11434/api
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:4b}
+      OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      NEURON_AI_PROVIDER: ollama
+      NEURON_EMBEDDING_PROVIDER: ollama
+      NEURON_STORE_PROVIDER: chroma
+      CHROMA_HOST: http://chroma:8000
+      CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
+    depends_on:
+      app:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+      chroma:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r 'exit(0);'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - companion
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lern-begleiter-ollama
+    volumes:
+      - ./data/ollama:/root/.ollama
+    # Kein Host-Port-Mapping (nur Compose-Netz) – Security-Prüfpunkt Spec M1
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+    networks:
+      - companion
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: lern-begleiter-ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        echo "Pulling embedding model nomic-embed-text..."
+        ollama pull nomic-embed-text
+        echo "Pulling chat model qwen3:4b..."
+        ollama pull qwen3:4b
+        echo "Ollama models ready."
+    restart: "no"
+    networks:
+      - companion
+
+  chroma:
+    image: chromadb/chroma:latest
+    container_name: lern-begleiter-chroma
+    volumes:
+      - ./data/chroma:/data
+    environment:
+      IS_PERSISTENT: "TRUE"
+      ANONYMIZED_TELEMETRY: "FALSE"
+    # Kein Host-Port-Mapping (nur Compose-Netz) – Security-Prüfpunkt Spec M1
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/bin/bash",
+          "-c",
+          "exec 3<>/dev/tcp/127.0.0.1/8000",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - companion
+
+networks:
+  companion:
+    driver: bridge
