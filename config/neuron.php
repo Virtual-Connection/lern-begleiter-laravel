@@ -32,7 +32,8 @@ return [
     */
 
     'provider' => [
-        'default' => env('NEURON_AI_PROVIDER'),
+        // AI_PROVIDER als Alias (OpenRouter-Smoke); NEURON_AI_PROVIDER hat Vorrang
+        'default' => env('NEURON_AI_PROVIDER', env('AI_PROVIDER', 'ollama')),
 
         'anthropic' => [
             'key' => env('ANTHROPIC_KEY'),
@@ -67,6 +68,13 @@ return [
                     'num_predict' => 128,
                 ],
             ],
+        ],
+
+        'openrouter' => [
+            'key' => env('OPENROUTER_API_KEY'),
+            'model' => env('OPENROUTER_MODEL', 'openrouter/free'),
+            'base_uri' => env('OPENROUTER_BASE_URI', 'https://openrouter.ai/api/v1'),
+            'parameters' => [],
         ],
 
         'mistral' => [

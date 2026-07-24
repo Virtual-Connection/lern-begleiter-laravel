@@ -38,25 +38,29 @@ Ollama/Chroma sind absichtlich **nicht** auf den Host gemappt (Security-Prüfpun
 
 ## Neuron-Smoke (manuell, kein CI-Test)
 
-Nach `docker compose up` und erfolgreichem `ollama-init`:
+Default-Chat läuft über **OpenRouter** (`openrouter/free`). Embeddings bleiben lokal bei Ollama.
 
-```bash
-docker compose exec app php artisan tinker
-```
-
-```php
-\App\Neuron\SmokeAgent::make()->chat(new \NeuronAI\Chat\Messages\UserMessage('ping'))->getMessage()->getContent();
-```
+1. In `.env` den Key setzen:
+   ```env
+   OPENROUTER_API_KEY=sk-or-...
+   ```
+2. App-Container neu laden (damit die Env greift):
+   ```powershell
+   docker compose up -d --force-recreate app queue
+   ```
+3. Smoke:
+   ```powershell
+   docker compose exec app php artisan tinker
+   ```
+   ```php
+   \App\Neuron\SmokeAgent::make()->chat(new \NeuronAI\Chat\Messages\UserMessage('ping'))->getMessage()->getContent();
+   ```
 
 (In Tinker keine `use`-Statements und kein vorangestelltes `php` — eine Zeile mit FQCN.)
 
-Erwartung: eine kurze textuelle Antwort vom lokalen Modell `qwen2.5:1.5b`.
+Zurück zu lokalem Ollama-Chat: `AI_PROVIDER=ollama` und `NEURON_AI_PROVIDER=ollama`, dann Container neu erstellen.
 
-Hinweise:
-- Erst nach erfolgreichem Modell-Pull (`ollama list` zeigt `qwen2.5:1.5b`).
-- Timeout 180s; Antwortlänge begrenzt (`num_predict: 128`). Parallel keine zweite Ollama-Anfrage.
-- Optional schwerer: `OLLAMA_MODEL=qwen3:4b` (Qualität, auf CPU oft zu langsam).
-- Kein echter LLM-Call in Pest.
+Kein echter LLM-Call in Pest.
 
 ## Qualitätssicherung (lokal)
 
@@ -79,6 +83,6 @@ CI (GitHub Actions) führt dieselben drei Checks aus.
 
 ## Hinweise
 
-- Default-Chat-Modell: `qwen2.5:1.5b` (CPU-Dev). Optional `qwen3:4b` / `qwen3:8b` via `OLLAMA_MODEL` bei mehr RAM/GPU.
-- Embedding-Modell: `nomic-embed-text`.
+- Default-Chat: OpenRouter `openrouter/free` (schnell). Lokal: `AI_PROVIDER=ollama` + `qwen2.5:1.5b`.
+- Embedding-Modell: `nomic-embed-text` (Ollama).
 - Livewire: Spec nennt v3; mit Laravel 13 ist nur Livewire 4 installierbar – dokumentiert in AP-1.

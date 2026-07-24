@@ -18,9 +18,13 @@ services:
       OLLAMA_URL: http://ollama:11434/api
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:1.5b}
       OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
-      NEURON_AI_PROVIDER: ollama
-      NEURON_EMBEDDING_PROVIDER: ollama
+      AI_PROVIDER: ${AI_PROVIDER:-ollama}
+      NEURON_AI_PROVIDER: ${NEURON_AI_PROVIDER:-ollama}
+      NEURON_EMBEDDING_PROVIDER: ${NEURON_EMBEDDING_PROVIDER:-ollama}
       NEURON_STORE_PROVIDER: chroma
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/free}
+      OPENROUTER_BASE_URI: ${OPENROUTER_BASE_URI:-https://openrouter.ai/api/v1}
       CHROMA_HOST: http://chroma:8000
       CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
     depends_on:
@@ -54,9 +58,13 @@ services:
       OLLAMA_URL: http://ollama:11434/api
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:1.5b}
       OLLAMA_EMBEDDING_MODEL: ${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
-      NEURON_AI_PROVIDER: ollama
-      NEURON_EMBEDDING_PROVIDER: ollama
+      AI_PROVIDER: ${AI_PROVIDER:-ollama}
+      NEURON_AI_PROVIDER: ${NEURON_AI_PROVIDER:-ollama}
+      NEURON_EMBEDDING_PROVIDER: ${NEURON_EMBEDDING_PROVIDER:-ollama}
       NEURON_STORE_PROVIDER: chroma
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/free}
+      OPENROUTER_BASE_URI: ${OPENROUTER_BASE_URI:-https://openrouter.ai/api/v1}
       CHROMA_HOST: http://chroma:8000
       CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
     depends_on:

@@ -11,7 +11,7 @@ use NeuronAI\Providers\AIProviderInterface;
 use NeuronAI\Providers\Ollama\Ollama;
 
 /**
- * Minimaler Agent für den manuellen AP-1-Smoke gegen lokales Ollama.
+ * Minimaler Agent für den manuellen AP-1-Smoke (Ollama oder OpenRouter).
  * Kein produktiver RAG-Agent (kommt als CompanionRag in AP-4).
  */
 class SmokeAgent extends Agent
@@ -20,7 +20,7 @@ class SmokeAgent extends Agent
     {
         $provider = AIProvider::driver();
 
-        // CPU-Smoke braucht längeren Timeout als Neuron-Default (60s)
+        // CPU-Ollama braucht längeren Timeout als Neuron-Default (60s)
         if ($provider instanceof Ollama) {
             $provider->setHttpClient(
                 (new GuzzleHttpClient(
@@ -34,6 +34,6 @@ class SmokeAgent extends Agent
 
     public function instructions(): string
     {
-        return 'Reply briefly to confirm the local Ollama connection works.';
+        return 'Reply briefly to confirm the AI provider connection works.';
     }
 }
