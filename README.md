@@ -36,6 +36,25 @@ Persistenz unter `D:\lern-begleiter-laravel\data`:
 
 Ollama/Chroma sind absichtlich **nicht** auf den Host gemappt (Security-Prüfpunkt Spec M1).
 
+Der **Obsidian-Vault** wird read-only nach `/vault` in `app` und `queue` gemountet (`COMPANION_VAULT_HOST_PATH` → `/vault`). Quellen-Pfade in der DB sind damit Container-Pfade, z. B. `/vault/PHP und Laravel`.
+
+## Quellen / Dev-Seed
+
+In `.env` den Host-Vault setzen (Beispiel):
+
+```env
+COMPANION_VAULT_HOST_PATH="C:/Users/t.hartwig/Documents/Obsidian Vault"
+```
+
+Stack neu starten, dann im Container seedern:
+
+```powershell
+docker compose up -d --force-recreate app queue
+docker compose exec app php artisan db:seed --class=DevVaultSourceSeeder
+```
+
+UI: http://localhost:8080/sources – beim manuellen Anlegen den Container-Pfad nutzen (`/vault/...`).
+
 ## Neuron-Smoke (manuell, kein CI-Test)
 
 Default-Chat läuft über **OpenRouter** (`openrouter/free`). Embeddings bleiben lokal bei Ollama.
