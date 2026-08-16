@@ -35,7 +35,9 @@
                 <tbody>
                     @foreach ($sources as $source)
                         <tr class="border-b border-stone-200 last:border-0">
-                            <td class="px-3 py-2 font-medium">{{ $source->name }}</td>
+                            <td class="px-3 py-2 font-medium">
+                                <a href="{{ route('sources.show', $source) }}" class="hover:underline">{{ $source->name }}</a>
+                            </td>
                             <td class="px-3 py-2 font-mono text-xs">{{ $source->type->value }}</td>
                             <td class="px-3 py-2 font-mono text-xs break-all">{{ $source->path }}</td>
                             <td class="px-3 py-2">

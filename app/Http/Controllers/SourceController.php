@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSourceRequest;
+use App\Models\Document;
 use App\Models\Source;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class SourceController extends Controller
@@ -19,6 +21,24 @@ class SourceController extends Controller
 
         return view('sources.index', [
             'sources' => $sources,
+        ]);
+    }
+
+    public function show(Source $source): View
+    {
+        $documents = $source->documents()
+            ->orderBy('path')
+            ->get();
+
+        /** @var Collection<string, int> $statusCounts */
+        $statusCounts = $documents->countBy(
+            fn (Document $document): string => $document->sync_status->value,
+        );
+
+        return view('sources.show', [
+            'source' => $source,
+            'documents' => $documents,
+            'statusCounts' => $statusCounts,
         ]);
     }
 
