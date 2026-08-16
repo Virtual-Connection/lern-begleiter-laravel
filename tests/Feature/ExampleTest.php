@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-it('returns a successful response from the welcome page', function () {
-    $response = $this->get('/');
-
-    $response->assertSuccessful();
+it('redirects the home page to sources', function () {
+    $this->get('/')
+        ->assertRedirect(route('sources.index'));
 });

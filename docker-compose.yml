@@ -8,6 +8,8 @@ services:
       - "${APP_PORT:-8080}:8000"
     volumes:
       - .:/var/www/html
+      # Obsidian-Vault (Host) → fester Container-Pfad für Seed/Sync
+      - "${COMPANION_VAULT_HOST_PATH:-C:/Users/t.hartwig/Documents/Obsidian Vault}:/vault:ro"
     env_file:
       - .env
     environment:
@@ -27,6 +29,8 @@ services:
       OPENROUTER_BASE_URI: ${OPENROUTER_BASE_URI:-https://openrouter.ai/api/v1}
       CHROMA_HOST: http://chroma:8000
       CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
+      # Im Container immer /vault – unabhängig von Host-Pfad in .env
+      COMPANION_VAULT_ROOT: /vault
     depends_on:
       ollama:
         condition: service_healthy
@@ -49,6 +53,7 @@ services:
     command: ["php", "artisan", "queue:work", "--sleep=1", "--tries=3", "--timeout=120"]
     volumes:
       - .:/var/www/html
+      - "${COMPANION_VAULT_HOST_PATH:-C:/Users/t.hartwig/Documents/Obsidian Vault}:/vault:ro"
     env_file:
       - .env
     environment:
@@ -67,6 +72,7 @@ services:
       OPENROUTER_BASE_URI: ${OPENROUTER_BASE_URI:-https://openrouter.ai/api/v1}
       CHROMA_HOST: http://chroma:8000
       CHROMA_COLLECTION: ${CHROMA_COLLECTION:-companion}
+      COMPANION_VAULT_ROOT: /vault
     depends_on:
       app:
         condition: service_healthy

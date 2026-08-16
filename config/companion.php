@@ -13,6 +13,13 @@ return [
     |
     */
 
+    /*
+    | Absolute root of the Obsidian vault (dev seed + later sync).
+    | Under Docker Compose this is /vault (Host-Pfad via COMPANION_VAULT_HOST_PATH).
+    | Sources themselves live in the DB; this is only the mount/seed root.
+    */
+    'vault_root' => env('COMPANION_VAULT_ROOT'),
+
     'chat_model' => env('OPENROUTER_MODEL', env('OLLAMA_MODEL', 'qwen2.5:1.5b')),
 
     'embedding_model' => env('OLLAMA_EMBEDDING_MODEL', 'nomic-embed-text'),
