@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Contracts\DocumentSourceFactory;
+use App\Contracts\IndexingService;
+use App\Services\NullIndexingService;
+use App\Services\Sources\SourceTypeDocumentSourceFactory;
 use Illuminate\Support\ServiceProvider;
 use NeuronAI\HttpClient\GuzzleHttpClient;
 use NeuronAI\Laravel\Facades\AIProvider;
@@ -16,7 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(DocumentSourceFactory::class, SourceTypeDocumentSourceFactory::class);
+
+        // AP-4 rebinds this to the real Chunking/Embeddings/FileVectorStore
+        // implementation; AP-3 only wires the sync/job flow against the
+        // interface (see App\Services\NullIndexingService).
+        $this->app->bind(IndexingService::class, NullIndexingService::class);
     }
 
     /**

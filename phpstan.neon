@@ -5,3 +5,8 @@ parameters:
     paths:
         - app
     level: 5
+    # Without this, Larastan can't see through Document/Source's
+    # `casts(): array` method to the enum classes (SyncStatus/SourceType),
+    # so it infers those properties as plain `string` and flags any
+    # `=== SomeEnum::Case` comparison as always false (AP-3).
+    parseModelCastsMethod: true

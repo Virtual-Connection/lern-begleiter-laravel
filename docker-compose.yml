@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/var/www/html
       # Obsidian-Vault (Host) → fester Container-Pfad für Seed/Sync
-      - "${COMPANION_VAULT_HOST_PATH:-C:/Users/t.hartwig/Documents/Obsidian Vault}:/vault:ro"
+      - "${COMPANION_VAULT_HOST_PATH:?Bitte COMPANION_VAULT_HOST_PATH in .env setzen (Pfad zu deinem lokalen Obsidian-Vault, siehe .env.example)}:/vault:ro"
     env_file:
       - .env
     environment:
@@ -53,7 +53,7 @@ services:
     command: ["php", "artisan", "queue:work", "--sleep=1", "--tries=3", "--timeout=120"]
     volumes:
       - .:/var/www/html
-      - "${COMPANION_VAULT_HOST_PATH:-C:/Users/t.hartwig/Documents/Obsidian Vault}:/vault:ro"
+      - "${COMPANION_VAULT_HOST_PATH:?Bitte COMPANION_VAULT_HOST_PATH in .env setzen (Pfad zu deinem lokalen Obsidian-Vault, siehe .env.example)}:/vault:ro"
     env_file:
       - .env
     environment:
