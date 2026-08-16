@@ -40,10 +40,10 @@ Der **Obsidian-Vault** wird read-only nach `/vault` in `app` und `queue` gemount
 
 ## Quellen / Dev-Seed
 
-In `.env` den Host-Vault setzen (Beispiel):
+In `.env` den Host-Vault setzen (Beispiel, Pfad zu deinem lokalen Obsidian-Vault):
 
 ```env
-COMPANION_VAULT_HOST_PATH="C:/Users/t.hartwig/Documents/Obsidian Vault"
+COMPANION_VAULT_HOST_PATH="C:/Users/<dein-benutzername>/Documents/Obsidian Vault"
 ```
 
 Stack neu starten, dann im Container seedern:
@@ -54,6 +54,14 @@ docker compose exec app php artisan db:seed --class=DevVaultSourceSeeder
 ```
 
 UI: http://localhost:8080/sources – beim manuellen Anlegen den Container-Pfad nutzen (`/vault/...`).
+
+## Ingest & Sync (AP-3)
+
+```bash
+php artisan corpus:sync
+```
+
+Hasht die Dokumente aller **aktiven** Quellen gegen den bekannten Stand, legt neue/geänderte `documents`-Zeilen als `pending` an und dispatcht `IndexDocumentJob` (neu/geändert/zuvor fehlgeschlagen) bzw. `DeleteDocumentJob` (aus der Quelle verschwunden). AP-3 bindet `IndexingService` noch an einen No-op (`NullIndexingService`) – Chunking/Embeddings/Vektor-Store folgen in AP-4, ohne dass sich am Sync-Fluss etwas ändert.
 
 ## Neuron-Smoke (manuell, kein CI-Test)
 

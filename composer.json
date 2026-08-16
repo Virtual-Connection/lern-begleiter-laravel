@@ -10,7 +10,8 @@
         "laravel/framework": "^13.8",
         "laravel/tinker": "^3.0",
         "livewire/livewire": "^4.3",
-        "neuron-core/neuron-laravel": "^1.2"
+        "neuron-core/neuron-laravel": "^1.2",
+        "symfony/finder": "^7.4|^8.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
